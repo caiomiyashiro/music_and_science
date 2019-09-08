@@ -1,10 +1,11 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import librosa, librosa.display
 
 from scipy.signal import stft
 
-
+COL_NAMES_NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
 def plot_signal(signal, Fs, title, xlabel, ylabel):
     time_axis = np.arange(0, len(signal)/Fs, 1/Fs)
@@ -80,3 +81,23 @@ def calc_chromagram(x, Fs, plot=True):
         plt.colorbar(); plt.clim([0, 1])
         plt.tight_layout()
     return C
+
+def get_frame_stats(chromagram, signal, Fs):
+    frames_per_sec = chromagram.shape[1]/(len(signal)/Fs) # Nbr of frames / length in seconds = frames per second
+    frame_duration_sec = 1/frames_per_sec        # frame duration = 1 / frames per second
+    return [frames_per_sec, frame_duration_sec]
+
+def chromagram_2_dataframe(chromagram, frame_duration_sec):
+    chromagram = pd.DataFrame(np.transpose(chromagram), columns=COL_NAMES_NOTES)
+
+    chromagram['start'] = np.arange(chromagram.shape[0]) * frame_duration_sec
+    chromagram['end'] = chromagram['start'] + frame_duration_sec
+    return chromagram
+
+def __get_chord_ix(elem, chords_annotation):
+    diffs = chords_annotation['start'] - elem
+    return diffs[diffs <= 0].index[-1]
+
+def get_annotated_chord_sequence(pcp, chords_annotation):
+    chord_ix = pcp['start'].apply(lambda elem: __get_chord_ix(elem, chords_annotation))
+    return chords_annotation.iloc[chord_ix.values]['chord'].values    
