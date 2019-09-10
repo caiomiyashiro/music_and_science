@@ -48,4 +48,7 @@ def calc_initial_state_prob_matrix(process_silence=False, annotations_folder_pat
 def adapt_initial_prob_matrix(init_states, transition_matrix):
     filtered_initial_states = init_states[transition_matrix.columns.values]
     filtered_initial_states = filtered_initial_states/filtered_initial_states.sum()
-    return filtered_initial_states    
+    return filtered_initial_states
+
+def get_hmm_predictions(chord_ix_predictions, ix_2_chord):
+    return np.array([ix_2_chord[chord_ix] for chord_ix in chord_ix_predictions])       
