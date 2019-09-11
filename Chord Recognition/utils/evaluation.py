@@ -7,9 +7,9 @@ from itertools import product
 from matplotlib import colors
 
 
-def calc_classification_stats(chromagram):
+def calc_classification_stats(chromagram, predicted_col='predicted'):
     obs = np.transpose(pd.get_dummies(chromagram['chord']))
-    pred = np.transpose(pd.get_dummies(chromagram['predicted']))
+    pred = np.transpose(pd.get_dummies(chromagram[predicted_col]))
 
     true_positives = np.logical_and(obs, pred).astype(np.int)
     true_positives.index = [f'{elem}-TP' for elem in true_positives.index]
@@ -24,7 +24,7 @@ def calc_classification_stats(chromagram):
     false_negatives = 3 * false_negatives
     false_negatives.index = [f'{elem}-FN' for elem in false_negatives.index]
 
-    f1_score_ = f1_score(chromagram['chord'], chromagram['predicted'], average='micro')
+    f1_score_ = f1_score(chromagram['chord'], chromagram[predicted_col], average='micro')
 
     return (true_positives, false_positives, false_negatives, f1_score_)
 

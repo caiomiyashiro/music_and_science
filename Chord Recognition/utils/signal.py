@@ -113,3 +113,14 @@ def get_annotated_chord_sequence(pcp, chords_annotation, test_version=False):
         chords[0] = '<START>'
         chords[-1] = '<END>'
     return chords
+
+def smooth_chords_by_beat(chromagram, signal, sr, predicted_col='predicted', n_beats=1):
+    _, beats = librosa.beat.beat_track(y=signal, sr=sr)
+    beat_times = librosa.frames_to_time(beats, sr=sr)
+    beat_times = beat_times * 2 * n_beats
+    beat_times[0] = 0
+    pcp = chromagram[['end', predicted_col]].copy()
+    pcp['chord_cluster'] = np.digitize(pcp['end'], beat_times)
+    mode_cluster = pcp.groupby('chord_cluster')[predicted_col].agg(lambda x:x.value_counts().index[0])
+    pcp['predicted_cluster'] = mode_cluster.loc[pcp['chord_cluster']].values
+    return pcp['predicted_cluster']

@@ -33,7 +33,7 @@ def simplify_predicted_chords(chromagram, predicted_col='predicted'):
     filtered_pcp = chromagram.loc[change_chord_ix].copy()
     end_time_previous = np.array([0] + filtered_pcp['end'][:-1].tolist())
     filtered_pcp['start'] = end_time_previous
-    return filtered_pcp[['chord', predicted_col, 'start', 'end']].reset_index(drop=True)
+    return filtered_pcp[[predicted_col, 'start', 'end']].reset_index(drop=True)
 
 def get_chord_notes(chord, chord_type='major'):
     notes = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#']
@@ -60,7 +60,7 @@ def create_simple_midi(chords_simplified, tempo, predicted_col='predicted'):
     midi_pitch_note = list(np.arange(60,72)) # 60 to 71
     notes_2_midi = {note_str:midi_pitch for note_str, midi_pitch in zip(notes_str, midi_pitch_note)}
 
-    pm = pretty_midi.PrettyMIDI(initial_tempo=tempo)
+    pm = pretty_midi.PrettyMIDI(initial_tempo=50)
     inst1 = pretty_midi.Instrument(program=42, is_drum=False, name='note1')
     inst2 = pretty_midi.Instrument(program=42, is_drum=False, name='note2')
     inst3 = pretty_midi.Instrument(program=42, is_drum=False, name='note3')
