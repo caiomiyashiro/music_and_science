@@ -95,8 +95,11 @@ def chromagram_2_dataframe(chromagram, frame_duration_sec, test_version=False):
 
     if(test_version == False):
 
-        start_chromagram = pd.DataFrame(np.zeros(chromagram.shape[1]), index=chromagram.columns).transpose()
-        end_chromagram = pd.DataFrame(np.zeros(chromagram.shape[1]) - 1, index=chromagram.columns).transpose()
+        start_chromagram = pd.DataFrame(np.random.normal(loc=0, scale=0.01, size=chromagram.shape[1]),
+                                        index=chromagram.columns).transpose()
+        start_chromagram.iloc[:,-2:] = 0                                
+        end_chromagram = pd.DataFrame(np.random.normal(loc=-1, scale=0.01, size=chromagram.shape[1]),
+                                      index=chromagram.columns).transpose()
         end_chromagram.iloc[:,-2:] = chromagram.iloc[-1]['end']+.01
         chromagram = start_chromagram.append(chromagram, ignore_index=True).append(end_chromagram, ignore_index=True)
 

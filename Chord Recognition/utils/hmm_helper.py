@@ -52,11 +52,12 @@ def get_hmm_predictions(chord_ix_predictions, ix_2_chord):
     return np.array([ix_2_chord[chord_ix] for chord_ix in chord_ix_predictions])
 
 
-def calc_initial_state_prob_matrix(process_silence=False, annotations_folder_path='Processed Beatles Annotation Files'):
+def calc_initial_state_prob_matrix(process_silence=False, annotations_folder_path='lab_and_musics'):
     first_chords = []
     for file_str in os.listdir(annotations_folder_path):
-        chords_annotation_ = read_simplify_chord_file(f'{annotations_folder_path}/{file_str}', process_silence)
-        first_chords.append(chords_annotation_['chord'].values[0])
+        if(file_str.endswith('.lab')):
+            chords_annotation_ = read_simplify_chord_file(f'{annotations_folder_path}/{file_str}', process_silence)
+            first_chords.append(chords_annotation_['chord'].values[0])
 
     first_chord_counts = np.unique(first_chords, return_counts=True)
     initial_state_probs = pd.Series(first_chord_counts[1]/first_chord_counts[1].sum(), index=first_chord_counts[0])
@@ -65,4 +66,4 @@ def calc_initial_state_prob_matrix(process_silence=False, annotations_folder_pat
 def adapt_initial_prob_matrix(init_states, transition_matrix):
     filtered_initial_states = init_states[transition_matrix.columns.values]
     filtered_initial_states = filtered_initial_states/filtered_initial_states.sum()
-    return filtered_initial_states
+    return filtered_initial_states.fillna(0)

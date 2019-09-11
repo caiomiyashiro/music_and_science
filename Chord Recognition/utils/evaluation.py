@@ -7,26 +7,29 @@ from itertools import product
 from matplotlib import colors
 
 
-def calc_classification_stats(chromagram, predicted_col='predicted'):
-    obs = np.transpose(pd.get_dummies(chromagram['chord']))
-    pred = np.transpose(pd.get_dummies(chromagram[predicted_col]))
+def calc_classification_stats(chromagram, predicted_col='predicted', only_f1=False):
+    if(only_f1 == False):
+        obs = np.transpose(pd.get_dummies(chromagram['chord']))
+        pred = np.transpose(pd.get_dummies(chromagram[predicted_col]))
 
-    true_positives = np.logical_and(obs, pred).astype(np.int)
-    true_positives.index = [f'{elem}-TP' for elem in true_positives.index]
+        true_positives = np.logical_and(obs, pred).astype(np.int)
+        true_positives.index = [f'{elem}-TP' for elem in true_positives.index]
 
-    false_positives = obs - pred
-    false_positives = np.less(false_positives, 0).astype(int)
-    false_positives = 2 * false_positives
-    false_positives.index = [f'{elem}-FP' for elem in false_positives.index]
+        false_positives = obs - pred
+        false_positives = np.less(false_positives, 0).astype(int)
+        false_positives = 2 * false_positives
+        false_positives.index = [f'{elem}-FP' for elem in false_positives.index]
 
-    false_negatives = obs - pred
-    false_negatives = np.greater(false_negatives, 0).astype(int)
-    false_negatives = 3 * false_negatives
-    false_negatives.index = [f'{elem}-FN' for elem in false_negatives.index]
+        false_negatives = obs - pred
+        false_negatives = np.greater(false_negatives, 0).astype(int)
+        false_negatives = 3 * false_negatives
+        false_negatives.index = [f'{elem}-FN' for elem in false_negatives.index]
 
     f1_score_ = f1_score(chromagram['chord'], chromagram[predicted_col], average='micro')
-
-    return (true_positives, false_positives, false_negatives, f1_score_)
+    if(only_f1 == False):
+        return (true_positives, false_positives, false_negatives, f1_score_)
+    else:
+        return f1_score_
 
 def plot_performance(true_positives, false_positives, false_negatives, frame_duration_sec):
     all_chords_list_maj = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
