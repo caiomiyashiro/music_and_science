@@ -87,26 +87,29 @@ def get_frame_stats(chromagram, signal, Fs):
     frame_duration_sec = 1/frames_per_sec        # frame duration = 1 / frames per second
     return [frames_per_sec, frame_duration_sec]
 
-def __get_chord_ix(elem, chords_annotation):
-    diffs = chords_annotation['start'] - elem
-    return diffs[diffs <= 0].index[-1]
-
-def get_annotated_chord_sequence(pcp, chords_annotation):
-    chord_ix = pcp['start'].apply(lambda elem: __get_chord_ix(elem, chords_annotation))
-    chords = chords_annotation.iloc[chord_ix.values]['chord'].values
-    chords[0] = '<START>'
-    chords[-1] = '<END>'
-    return chords
-
-def chromagram_2_dataframe(chromagram, frame_duration_sec):
+def chromagram_2_dataframe(chromagram, frame_duration_sec, test_version=False):
     chromagram = pd.DataFrame(np.transpose(chromagram), columns=COL_NAMES_NOTES)
 
     chromagram['start'] = np.arange(chromagram.shape[0]) * frame_duration_sec
     chromagram['end'] = chromagram['start'] + frame_duration_sec
 
-    start_chromagram = pd.DataFrame(np.zeros(chromagram.shape[1]), index=chromagram.columns).transpose()
-    end_chromagram = pd.DataFrame(np.zeros(chromagram.shape[1]) - 1, index=chromagram.columns).transpose()
-    end_chromagram.iloc[:,-2:] = chromagram.iloc[-1]['end']+.01
-    chromagram = start_chromagram.append(chromagram, ignore_index=True).append(end_chromagram, ignore_index=True)
+    if(test_version == False):
+
+        start_chromagram = pd.DataFrame(np.zeros(chromagram.shape[1]), index=chromagram.columns).transpose()
+        end_chromagram = pd.DataFrame(np.zeros(chromagram.shape[1]) - 1, index=chromagram.columns).transpose()
+        end_chromagram.iloc[:,-2:] = chromagram.iloc[-1]['end']+.01
+        chromagram = start_chromagram.append(chromagram, ignore_index=True).append(end_chromagram, ignore_index=True)
 
     return chromagram
+
+def __get_chord_ix(elem, chords_annotation):
+    diffs = chords_annotation['start'] - elem
+    return diffs[diffs <= 0].index[-1]
+
+def get_annotated_chord_sequence(pcp, chords_annotation, test_version=False):
+    chord_ix = pcp['start'].apply(lambda elem: __get_chord_ix(elem, chords_annotation))
+    chords = chords_annotation.iloc[chord_ix.values]['chord'].values
+    if(test_version == False):
+        chords[0] = '<START>'
+        chords[-1] = '<END>'
+    return chords

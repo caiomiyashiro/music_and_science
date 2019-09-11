@@ -27,13 +27,13 @@ def read_simplify_chord_file(music_file_path, process_silence=False):
         chords_annotation.loc[chords_annotation['chord'] == 'N', 'chord'] = chords_annotation['chord'].mode()[0]
     return chords_annotation
 
-def simplify_predicted_chords(chromagram):
-    change_chord = chromagram['predicted'] != chromagram['predicted'].shift(-1)
+def simplify_predicted_chords(chromagram, predicted_col='predicted'):
+    change_chord = chromagram[predicted_col] != chromagram[predicted_col].shift(-1)
     change_chord_ix = change_chord[change_chord == True].index
     filtered_pcp = chromagram.loc[change_chord_ix].copy()
     end_time_previous = np.array([0] + filtered_pcp['end'][:-1].tolist())
     filtered_pcp['start'] = end_time_previous
-    return filtered_pcp[['chord', 'predicted', 'start', 'end']]
+    return filtered_pcp[['chord', predicted_col, 'start', 'end']].reset_index(drop=True)
 
 def get_chord_notes(chord, chord_type='major'):
     notes = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#']
@@ -54,7 +54,7 @@ def get_chord_notes(chord, chord_type='major'):
     chord_list = [chord] + extra_chord_notes
     return chord_list
 
-def create_simple_midi(chords_simplified, tempo):
+def create_simple_midi(chords_simplified, tempo, predicted_col='predicted'):
     notes_str = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
     # https://en.scratch-wiki.info/wiki/MIDI_Notes
     midi_pitch_note = list(np.arange(60,72)) # 60 to 71
@@ -73,9 +73,9 @@ def create_simple_midi(chords_simplified, tempo):
 
         chord_type = 'major'
         # get chord notes
-        if(len(row['predicted']) > 1): # name contains > than 1 letter = minor chord FOR NOW
+        if(len(row[predicted_col]) > 1): # name contains > than 1 letter = minor chord FOR NOW
             chord_type = 'minor'
-        chord_notes = get_chord_notes(row['predicted'].split(':')[0], chord_type)
+        chord_notes = get_chord_notes(row[predicted_col].split(':')[0], chord_type)
 
         inst1.notes.append(pretty_midi.Note(velocity, notes_2_midi[chord_notes[0]] - TONIC, chord_start_time, chord_end_time))
         inst2.notes.append(pretty_midi.Note(velocity, notes_2_midi[chord_notes[1]], chord_start_time, chord_end_time))
