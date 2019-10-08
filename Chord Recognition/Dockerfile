@@ -12,7 +12,8 @@ COPY requirements.txt /workshop/.
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY pydata_hidden_markov_models_for_chord_recognition.ipynb /workshop/.
+COPY complete_pydata_hidden_markov_models_for_chord_recognition.ipynb /workshop/.
+COPY presentation_pydata_hidden_markov_models_for_chord_recognition.ipynb /workshop/.
 COPY images/ /workshop/images
 COPY lab_and_musics/ /workshop/lab_and_musics
 COPY sounds/ /workshop/sounds
