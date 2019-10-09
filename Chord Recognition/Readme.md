@@ -2,6 +2,8 @@
 
 Link - [https://de.pycon.org/program/pydata-yxndb9-hidden-markov-models-for-chord-recognition-intuition-and-applications-caio-miyashiro/](https://de.pycon.org/program/pydata-yxndb9-hidden-markov-models-for-chord-recognition-intuition-and-applications-caio-miyashiro/)
 
+Backup Files and Pdf versions: https://drive.google.com/drive/folders/1YmfEPtX_QLlpo0sR0kQwFV4-Lz6Sd01W?usp=sharing. Note that this link will be deleted in **January 2020**
+
 ---
 ### The idea of the workshop:
 
