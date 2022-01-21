@@ -1,7 +1,7 @@
 urllib3==1.22
 matplotlib==2.2.3
 numpy==1.16.4
-ipython==7.5.0
+ipython==7.16.3
 librosa==0.6.3
 #midi==0.2.3
 pretty-midi==0.2.8
