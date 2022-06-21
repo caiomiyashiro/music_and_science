@@ -1,6 +1,6 @@
 urllib3==1.22
 matplotlib==2.2.3
-numpy==1.16.4
+numpy==1.22.0
 ipython==7.5.0
 librosa==0.6.3
 #midi==0.2.3
